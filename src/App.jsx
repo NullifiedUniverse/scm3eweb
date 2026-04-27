@@ -81,7 +81,63 @@ const DEPTS = {
   "Student Rights": { name: { EN: "Student Rights", ZH: "學權部" }, light: "#FFDAD6", textLight: "#410002", dark: "#680005", textDark: "#FFB4AB", shape: "blob" },
 };
 
-// --- CMS PAYLOAD ---
+// --- ANIMATED COMPONENTS ---
+
+function HoverReveal({ darkMode, lang }) {
+  const [hover, setHover] = useState(false);
+  return (
+    <motion.a
+      href="https://www.instagram.com/kcis_2steps_ahead/"
+      target="_blank"
+      rel="noreferrer"
+      onHoverStart={() => setHover(true)}
+      onHoverEnd={() => setHover(false)}
+      whileTap={{ scale: 0.98 }}
+      animate={{
+        borderRadius: hover ? "32px 8px 32px 32px" : "24px",
+        backgroundColor: hover ? (darkMode ? "#1e293b" : "#0f172a") : (darkMode ? "#0f172a" : "#f1f5f9"),
+      }}
+      transition={QUICK_SPRING}
+      className="relative p-6 cursor-pointer overflow-hidden shadow-sm flex items-center justify-between h-full w-full border border-transparent dark:border-slate-800"
+    >
+      <motion.div 
+        animate={{ opacity: hover ? 1 : 0 }} 
+        transition={{ duration: 0.8 }}
+        className="absolute inset-0 bg-[radial-gradient(circle_at_right,_var(--tw-gradient-stops))] from-blue-500/10 via-transparent to-transparent pointer-events-none" 
+      />
+      <motion.span animate={{ color: hover ? "#f8fafc" : (darkMode ? "#f8fafc" : "#0f172a") }} className="font-bold z-10 text-lg flex-1">
+        <LangText content={{ EN: "Official Instagram", ZH: "官方 Instagram" }} lang={lang} inline />
+      </motion.span>
+      <motion.div 
+        animate={{ x: hover ? 0 : 20, opacity: hover ? 1 : 0, scale: hover ? 1 : 0.8, rotate: hover ? 0 : -45 }} 
+        transition={BOUNCE_SPRING} 
+        className="flex items-center justify-center w-10 h-10 bg-blue-500 rounded-full text-white font-black shrink-0 z-10 shadow-lg shadow-blue-500/30"
+      >
+        →
+      </motion.div>
+    </motion.a>
+  );
+}
+
+function ActionPill({ darkMode, lang }) {
+  const [active, setActive] = useState(false);
+  return (
+    <motion.div
+      layout
+      onClick={() => setActive(!active)}
+      initial={false}
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.96 }}
+      animate={{ borderRadius: active ? 16 : 32 }}
+      transition={M3_SPRING}
+      className={`relative h-14 cursor-pointer flex items-center justify-center overflow-hidden shadow-md mt-4 ${active ? "w-full bg-blue-600" : (darkMode ? "w-[160px] bg-slate-800" : "w-[160px] bg-blue-100")}`}
+    >
+      <motion.span layout="position" className={`font-bold whitespace-nowrap z-10 flex items-center gap-2 ${active ? "text-white" : (darkMode ? "text-blue-400" : "text-blue-700")}`}>
+        <LangText content={active ? { EN: "Confirmed", ZH: "已確認" } : { EN: "Submit Proposal", ZH: "提交提案" }} lang={lang} inline />
+      </motion.span>
+    </motion.div>
+  );
+}
 
 const MemberBlob = React.memo(({ member, activeItem, onClick, darkMode, lang, index }) => {
   const [imgFailed, setImgFailed] = useState(false);

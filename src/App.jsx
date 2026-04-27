@@ -1,4 +1,4 @@
-import { CMS } from "./cms_data";
+import { CMS, MEMBER_IMAGES } from "./cms_data";
 import React, { useState, useEffect, useLayoutEffect, useMemo } from "react";
 import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 import { Moon, Sun, X, Calendar, Users, Home, Info, ArrowRight, Star, Code, Languages } from "lucide-react";
@@ -83,64 +83,6 @@ const DEPTS = {
 
 // --- CMS PAYLOAD ---
 
-// --- ANIMATED COMPONENTS ---
-
-function HoverReveal({ darkMode, lang }) {
-  const [hover, setHover] = useState(false);
-  return (
-    <motion.a
-      href="https://www.instagram.com/kcis_2steps_ahead/"
-      target="_blank"
-      rel="noreferrer"
-      onHoverStart={() => setHover(true)}
-      onHoverEnd={() => setHover(false)}
-      whileTap={{ scale: 0.98 }}
-      animate={{
-        borderRadius: hover ? "32px 8px 32px 32px" : "24px",
-        backgroundColor: hover ? (darkMode ? "#1e293b" : "#0f172a") : (darkMode ? "#0f172a" : "#f1f5f9"),
-      }}
-      transition={QUICK_SPRING}
-      className="relative p-6 cursor-pointer overflow-hidden shadow-sm flex items-center justify-between h-full w-full border border-transparent dark:border-slate-800"
-    >
-      <motion.div 
-        animate={{ opacity: hover ? 1 : 0 }} 
-        transition={{ duration: 0.8 }}
-        className="absolute inset-0 bg-[radial-gradient(circle_at_right,_var(--tw-gradient-stops))] from-blue-500/10 via-transparent to-transparent pointer-events-none" 
-      />
-      <motion.span animate={{ color: hover ? "#f8fafc" : (darkMode ? "#f8fafc" : "#0f172a") }} className="font-bold z-10 text-lg flex-1">
-        <LangText content={{ EN: "Official Instagram", ZH: "官方 Instagram" }} lang={lang} inline />
-      </motion.span>
-      <motion.div 
-        animate={{ x: hover ? 0 : 20, opacity: hover ? 1 : 0, scale: hover ? 1 : 0.8, rotate: hover ? 0 : -45 }} 
-        transition={BOUNCE_SPRING} 
-        className="flex items-center justify-center w-10 h-10 bg-blue-500 rounded-full text-white font-black shrink-0 z-10 shadow-lg shadow-blue-500/30"
-      >
-        →
-      </motion.div>
-    </motion.a>
-  );
-}
-
-function ActionPill({ darkMode, lang }) {
-  const [active, setActive] = useState(false);
-  return (
-    <motion.div
-      layout
-      onClick={() => setActive(!active)}
-      initial={false}
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.96 }}
-      animate={{ borderRadius: active ? 16 : 32 }}
-      transition={M3_SPRING}
-      className={`relative h-14 cursor-pointer flex items-center justify-center overflow-hidden shadow-md mt-4 ${active ? "w-full bg-blue-600" : (darkMode ? "w-[160px] bg-slate-800" : "w-[160px] bg-blue-100")}`}
-    >
-      <motion.span layout="position" className={`font-bold whitespace-nowrap z-10 flex items-center gap-2 ${active ? "text-white" : (darkMode ? "text-blue-400" : "text-blue-700")}`}>
-        <LangText content={active ? { EN: "Confirmed", ZH: "已確認" } : { EN: "Submit Proposal", ZH: "提交提案" }} lang={lang} inline />
-      </motion.span>
-    </motion.div>
-  );
-}
-
 const MemberBlob = React.memo(({ member, activeItem, onClick, darkMode, lang, index }) => {
   const [imgFailed, setImgFailed] = useState(false);
   const [prankLag, setPrankLag] = useState(false);
@@ -168,7 +110,7 @@ const MemberBlob = React.memo(({ member, activeItem, onClick, darkMode, lang, in
   const bgColor = isAndrew ? (darkMode ? "#082f49" : "#0284c7") : (darkMode ? theme.dark : theme.light);
   const textColor = isAndrew ? (darkMode ? "#e0f2fe" : "#ffffff") : (darkMode ? theme.textDark : theme.textLight);
   const isExpanded = activeItem?.id === member.id;
-  const imageUrl = member.image;
+  const imageUrl = MEMBER_IMAGES[member.id] || member.image;
 
   const paths = useMemo(() => [
     getPath(theme.shape, 100, 100, member.seed),
@@ -281,6 +223,7 @@ function ExpandedModal({ activeItem, setActiveItem, darkMode, lang }) {
 
   const bgColor = isAndrew ? (darkMode ? "#082f49" : "#0284c7") : (theme ? (darkMode ? theme.dark : theme.light) : (darkMode ? activeItem.colorDark : activeItem.colorLight));
   const textColor = isAndrew ? (darkMode ? "#e0f2fe" : "#ffffff") : (theme ? (darkMode ? theme.textDark : theme.textLight) : (darkMode ? activeItem.textDark : activeItem.textLight));
+  const imageUrl = isMember ? (MEMBER_IMAGES[activeItem.id] || activeItem.image) : activeItem.image;
 
   return (
     <>
@@ -309,14 +252,14 @@ function ExpandedModal({ activeItem, setActiveItem, darkMode, lang }) {
             />
           )}
 
-          {activeItem.image && !isMember && (
+          {imageUrl && !isMember && (
             <motion.div 
               initial={{ scale: 1.1, opacity: 0 }}
               animate={{ scale: 1, opacity: 0.2 }}
               exit={{ opacity: 0, transition: { duration: 0 } }}
               transition={{ duration: 0.8, ease: "easeOut" }}
               className="absolute top-0 right-0 w-full h-64 pointer-events-none mix-blend-overlay" 
-              style={{ backgroundImage: `url(${activeItem.image})`, backgroundSize: 'cover', backgroundPosition: 'center', maskImage: 'linear-gradient(to bottom, black, transparent)' }} 
+              style={{ backgroundImage: `url(${imageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center', maskImage: 'linear-gradient(to bottom, black, transparent)' }} 
             />
           )}
 
@@ -344,7 +287,7 @@ function ExpandedModal({ activeItem, setActiveItem, darkMode, lang }) {
 
             <div className={`overflow-y-auto hide-scrollbar z-10 flex-1 px-8 sm:px-10 pt-16 sm:pt-14 pb-8 cursor-default transition-all duration-700 ${curseStyle}`}>
               
-              {isMember && activeItem.image && !imgFailed && (
+              {isMember && imageUrl && !imgFailed && (
                  <motion.div 
                    initial={{ scale: 0.8, opacity: 0, rotate: -5 }}
                    animate={{ scale: 1, opacity: 1, rotate: 0 }}
@@ -357,7 +300,7 @@ function ExpandedModal({ activeItem, setActiveItem, darkMode, lang }) {
                        <clipPath id={`modal-clip-img-${activeItem.id}`}>
                          <motion.path animate={{ d: modalPaths }} transition={{ duration: 8 + (activeItem.seed % 3), repeat: Infinity, ease: "easeInOut" }} />
                        </clipPath>
-                       <image href={activeItem.image} x="0" y="0" width="100" height="100" preserveAspectRatio="xMidYMid slice" clipPath={`url(#modal-clip-img-${activeItem.id})`} onError={() => setImgFailed(true)} />
+                       <image href={imageUrl} x="0" y="0" width="100" height="100" preserveAspectRatio="xMidYMid slice" clipPath={`url(#modal-clip-img-${activeItem.id})`} onError={() => setImgFailed(true)} />
                      </g>
                    </svg>
                  </motion.div>
@@ -496,7 +439,7 @@ export default function App() {
   }, [activeFilter, activeGen]);
 
   return (
-    <div className={`min-h-screen selection:bg-blue-300 transition-colors duration-700 relative z-0 overflow-x-hidden ${darkMode ? "bg-slate-950 text-slate-100" : "bg-slate-50 text-slate-900"}`}>
+    <div className={`min-h-screen selection:bg-blue-300 transition-colors duration-700 relative z-0 overflow-x-hidden bg-transparent`}>
       
       {/* ORBS */}
       <div className="absolute top-0 left-0 w-full h-[600px] overflow-hidden pointer-events-none -z-10">

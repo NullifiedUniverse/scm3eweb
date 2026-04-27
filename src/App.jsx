@@ -166,7 +166,7 @@ const MemberBlob = React.memo(({ member, activeItem, onClick, darkMode, lang, in
   const bgColor = isAndrew ? (darkMode ? "#082f49" : "#0284c7") : (darkMode ? theme.dark : theme.light);
   const textColor = isAndrew ? (darkMode ? "#e0f2fe" : "#ffffff") : (darkMode ? theme.textDark : theme.textLight);
   const isExpanded = activeItem?.id === member.id;
-  const imageUrl = MEMBER_IMAGES[member.id] || member.image;
+  const imageUrl = member.image;
 
   const paths = useMemo(() => [
     getPath(theme.shape, 100, 100, member.seed),
@@ -279,7 +279,7 @@ function ExpandedModal({ activeItem, setActiveItem, darkMode, lang }) {
 
   const bgColor = isAndrew ? (darkMode ? "#082f49" : "#0284c7") : (theme ? (darkMode ? theme.dark : theme.light) : (darkMode ? activeItem.colorDark : activeItem.colorLight));
   const textColor = isAndrew ? (darkMode ? "#e0f2fe" : "#ffffff") : (theme ? (darkMode ? theme.textDark : theme.textLight) : (darkMode ? activeItem.textDark : activeItem.textLight));
-  const imageUrl = isMember ? (MEMBER_IMAGES[activeItem.id] || activeItem.image) : activeItem.image;
+  const imageUrl = activeItem.image;
 
   return (
     <>
@@ -704,5 +704,16 @@ export default function App() {
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
       `}} />
     </div>
+  );
+}
+/div>
+  );
+}
+e; }
+      `}} />
+    </div>
+  );
+}
+/div>
   );
 }
